@@ -1,7 +1,8 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 
 contract Bank{
     address owner;
@@ -24,5 +25,32 @@ contract Bank{
         return whitelistedTokens[symbol];
     }
 
+    receive() external payable{
+        balances[msg.sender]['Eth'] += msg.value;
+        }
+            
+    function withdrawEther(uint amount) external {
+        require(balances[msg.sender]['Eth'] >= amount, 'Insufficient funds');
+        balances[msg.sender]['Eth'] -= amount;
+        payable(msg.sender).call{value: amount}("");
+            }
+
+
+function depositTokens(uint256 amount, bytes32 symbol) external{
+    balances[msg.sender][symbol] += amount;
+    IERC20(whitelistedTokens[symbol]).transferFrom(msg.sender, address(this), amount);
+}
+
+function withdrawTokens(uint256 amount, bytes32 symbol) external{
+
+require(balances[msg.sender][symbol] >= amount, 'Insufficient funds');
+
+balances[msg.sender][symbol] -= amount;
+ IERC20(whitelistedTokens[symbol]).transfer( msg.sender,amount);
+}
+
+function getTokenBalance(bytes32 symbol) external view returns(uint256){
+    return balances[msg.sender][symbol];
+}
 
 }
