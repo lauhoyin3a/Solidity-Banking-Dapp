@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "../node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
 contract Bank{
@@ -32,7 +32,7 @@ contract Bank{
     function withdrawEther(uint amount) external {
         require(balances[msg.sender]['Eth'] >= amount, 'Insufficient funds');
         balances[msg.sender]['Eth'] -= amount;
-        payable(msg.sender).call{value: amount}("");
+        payable(msg.sender).call{value: amount};
             }
 
 
